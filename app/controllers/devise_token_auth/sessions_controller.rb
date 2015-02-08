@@ -17,7 +17,7 @@ module DeviseTokenAuth
         q = "BINARY uid = ? AND provider='email'"
       end
 
-      @resource = resource_class.where(q, email).first
+      @resource = resource_class.class.superclass == Object ? resource_class.where(uid: email, provider: 'email').first : resource_class.where(q, email).first
 
       if @resource and valid_params? and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
         # create client id

@@ -34,7 +34,7 @@ module DeviseTokenAuth
         q = "BINARY uid = ? AND provider='email'"
       end
 
-      @resource = resource_class.where(q, email).first
+      @resource = resource_class.class.superclass == Object ? resource_class.where(uid: email, provider: 'email').first : resource_class.where(q, email).first
 
       errors = nil
 
