@@ -11,7 +11,7 @@ module DeviseTokenAuth::Concerns::User
       self.devise_modules.delete(:omniauthable)
     end
 
-    unless self.class.superclass == Object
+    if self.method_defined?(:serialize)
       serialize :tokens, JSON
     end
 
@@ -21,7 +21,7 @@ module DeviseTokenAuth::Concerns::User
     # only validate unique emails among email registration users
     validate :unique_email_user, on: :create
 
-    unless self.class.superclass == Object
+    if self.method_defined?(:serialize)
       # can't set default on text fields in mysql, simulate here instead.
       after_save :set_empty_token_hash
       after_initialize :set_empty_token_hash
