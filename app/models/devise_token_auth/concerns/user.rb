@@ -10,7 +10,7 @@ module DeviseTokenAuth::Concerns::User
       self.devise_modules.delete(:omniauthable)
     end
 
-    if self.method_defined?(:serialize)
+    if respond_to?(:serialize)
       serialize :tokens, JSON
     end
 
@@ -20,10 +20,13 @@ module DeviseTokenAuth::Concerns::User
     # only validate unique emails among email registration users
     validate :unique_email_user, on: :create
 
-    if self.method_defined?(:serialize)
-      # can't set default on text fields in mysql, simulate here instead.
-      after_save :set_empty_token_hash
-      after_initialize :set_empty_token_hash
+
+    # can't set default on text fields in mysql, simulate here instead.
+    if ActiveRecord::Base.connected?
+      if ['mysql', 'sqlite', 'postgresql'].include?(ActiveRecord::Base.connection.adapter_name.downcase)
+        after_save :set_empty_token_hash
+        after_initialize :set_empty_token_hash
+      end
     end
 
     # keep uid in sync with email
@@ -132,7 +135,7 @@ module DeviseTokenAuth::Concerns::User
       updated_at and last_token and
 
       # ensure that previous token falls within the batch buffer throttle time of the last request
-      Time.parse(updated_at) > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
+      updated_at > Time.now - DeviseTokenAuth.batch_request_buffer_throttle and
 
       # ensure that the token is valid
       BCrypt::Password.new(last_token) == token
