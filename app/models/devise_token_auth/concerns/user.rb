@@ -22,11 +22,9 @@ module DeviseTokenAuth::Concerns::User
 
 
     # can't set default on text fields in mysql, simulate here instead.
-    if ActiveRecord::Base.connected?
-      if ['mysql', 'sqlite', 'postgresql'].include?(ActiveRecord::Base.connection.adapter_name.downcase)
-        after_save :set_empty_token_hash
-        after_initialize :set_empty_token_hash
-      end
+    if defined?(ActiveRecord::Base)
+      after_save :set_empty_token_hash
+      after_initialize :set_empty_token_hash
     end
 
     # keep uid in sync with email
