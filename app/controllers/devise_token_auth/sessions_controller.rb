@@ -17,7 +17,7 @@ module DeviseTokenAuth
 
         q = "#{field.to_s} = ? AND provider='email'"
 
-        if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+        if DeviseTokenAuth.database == :mysql
           q = "BINARY " + q
         end
 
