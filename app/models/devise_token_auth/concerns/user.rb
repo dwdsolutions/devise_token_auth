@@ -20,13 +20,6 @@ module DeviseTokenAuth::Concerns::User
     # only validate unique emails among email registration users
     validate :unique_email_user, on: :create
 
-
-    # can't set default on text fields in mysql, simulate here instead.
-    if DeviseTokenAuth.database == :mysql
-      after_save :set_empty_token_hash
-      after_initialize :set_empty_token_hash
-    end
-
     # keep uid in sync with email
     before_save :sync_uid
     before_create :sync_uid

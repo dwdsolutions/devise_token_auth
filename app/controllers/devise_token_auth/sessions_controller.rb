@@ -15,13 +15,7 @@ module DeviseTokenAuth
           q_value.downcase!
         end
 
-        q = "#{field.to_s} = ? AND provider='email'"
-
-        if DeviseTokenAuth.database == :mysql
-          q = "BINARY " + q
-        end
-
-        @resource = resource_class.class.superclass == Object ? resource_class.where(uid: q_value, provider: 'email').first : resource_class.where(q, q_value).first
+        @resource = resource_class.where(uid: q_value, provider: 'email').first
       end
 
       if @resource and valid_params?(field, q_value) and @resource.valid_password?(resource_params[:password]) and @resource.confirmed?
