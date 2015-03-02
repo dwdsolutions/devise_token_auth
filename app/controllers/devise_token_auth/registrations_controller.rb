@@ -1,3 +1,6 @@
+class RecordNotUnique < Exception
+end
+
 module DeviseTokenAuth
   class RegistrationsController < DeviseTokenAuth::ApplicationController
     before_filter :set_user_by_token, :only => [:destroy, :update]
@@ -62,7 +65,7 @@ module DeviseTokenAuth
             errors: @resource.errors.to_hash.merge(full_messages: @resource.errors.full_messages)
           }, status: 403
         end
-      rescue ActiveRecord::RecordNotUnique
+      rescue RecordNotUnique
         clean_up_passwords @resource
         render json: {
           status: 'error',

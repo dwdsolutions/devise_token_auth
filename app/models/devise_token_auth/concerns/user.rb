@@ -22,7 +22,7 @@ module DeviseTokenAuth::Concerns::User
 
 
     # can't set default on text fields in mysql, simulate here instead.
-    if defined?(ActiveRecord::Base)
+    if DeviseTokenAuth.database == :mysql
       after_save :set_empty_token_hash
       after_initialize :set_empty_token_hash
     end
